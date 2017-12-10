@@ -7,9 +7,10 @@
 ;; 3) Any live cell with more than three live neighbours dies, as if by overcrowding.
 ;; 4) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
-(defrecord Game [iteration-delay-in-millis
-                 map-size
-                 living-cells]
+(defrecord Game
+    [iteration-delay-in-millis
+     map-size
+     living-cells]
 
   Object
   (toString [_]
@@ -17,17 +18,41 @@
          " Map size: " map-size
          " Living cells: " living-cells)))
 
-(defn gonna-live?
+(defn get-all-surrounding-cells
   [cell]
-  true)
+  ;;(println (str "here cell " cell))
+  (let [cell-x (get cell 0)
+        cell-y (get cell 1)]
+    (for [x (range (dec cell-x) (+ cell-x 2))
+          y (range (dec cell-y) (+ cell-y 2))]
+      [x y])))
+
+(defn count-duplicates
+  [a b]
+  (let [concated (concat a b)]
+    (- (count concated) (count (set concated)))))
+
+(defn gonna-live?
+  [cell living-cells]
+  (let [all-surrounding-cells (get-all-surrounding-cells cell)]
+    (println (count-duplicates all-surrounding-cells living-cells))
+  true))
+
+(defn get-all-cells
+  [map-size]
+  ;;(println "get all cells")
+  (for [x (range (:x map-size))
+        y (range (:y map-size))]
+    [x y]))
 
 (defn create-next-generation
   [game]
   (let [next-generation
-        (for [cell (:living-cells game)
-              :when (gonna-live? cell)]
+        (for [cell (get-all-cells (:map-size game))
+              :when (gonna-live? cell (:living-cells game))]
           cell)]
 
+    (doall next-generation)
     (Game.
           (:iteration-delay-in-millis game)
           (:map-size game)
@@ -41,14 +66,9 @@
   [game]
   (let [delay (:iteration-delay-in-millis game)]
     (loop [game game]
-        (print-map game)
+        ;;(print-map game)
         (Thread/sleep delay)
         (recur (create-next-generation game)))))
-
-(defn test-fn
-  "TODO remove this fn. A function for testing purpuses."
-  [x]
-  x)
 
 (defn read-game-data-from-file
   [filename]

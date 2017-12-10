@@ -3,6 +3,6 @@
     :x 10
     :y 10
   }
-  :iteration-delay-in-millis 500
+  :iteration-delay-in-millis 2000
   :living-cells [[4 1] [5 4] [6 5] [7 2]]
 }
