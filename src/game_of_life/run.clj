@@ -7,6 +7,10 @@
 ;; 3) Any live cell with more than three live neighbours dies, as if by overcrowding.
 ;; 4) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 
+(defn print-map
+  [game]
+  (println game))
+
 (defrecord Game
     [iteration-delay-in-millis
      map-size
@@ -29,14 +33,32 @@
 
 (defn count-duplicates
   [a b]
-  (let [concated (concat a b)]
-    (- (count concated) (count (set concated)))))
+  (let [concatd (concat a b)]
+    (- (count concatd) (count (set concatd)))))
 
 (defn gonna-live?
   [cell living-cells]
-  (let [all-surrounding-cells (get-all-surrounding-cells cell)]
-    (println (count-duplicates all-surrounding-cells living-cells))
-  true))
+  (let [all-surrounding-cells (get-all-surrounding-cells cell)
+        living-neighbours (dec (count-duplicates all-surrounding-cells living-cells))
+        is-a-living-cell (count-duplicates living-cells [cell])]
+
+   ; (println (str living-neighbours "-" is-a-living-cell "-" living-cells "-" cell))
+
+    (if is-a-living-cell
+      (cond
+        ;; 1) Any live cell with fewer than two live neighbours dies, as if caused by under-population.
+        (< living-neighbours 2) false
+
+        ;; 2) Any live cell with two or three live neighbours lives on to the next generation.
+        (or (== living-neighbours 2) (== living-neighbours 3)) true
+
+        ;; 3) Any live cell with more than three live neighbours dies, as if by overcrowding.
+        (> living-neighbours 3) false
+        )
+
+      ;; 4) Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
+      (if (== living-neighbours 3) true false)
+  )))
 
 (defn get-all-cells
   [map-size]
@@ -53,14 +75,12 @@
           cell)]
 
     (doall next-generation)
+    (print-map game)
+    ;;(println next-generation)
     (Game.
           (:iteration-delay-in-millis game)
           (:map-size game)
           next-generation)))
-
-(defn print-map
-  [game]
-  (println game))
 
 (defn run-game
   [game]

@@ -32,7 +32,8 @@
     (is (= (count-duplicates [8 4] [9 6 7 2]) 0))
     (is (= (count-duplicates ["a"] ["d" "f" "g" "n"]) 0))
     (is (= (count-duplicates [[0 0] [3 3] [2 2]] [[4 4] [7 7] [-1 -1]]) 0))
-    (is (= (count-duplicates [[0 1]] [[1 0]]) 0)))
+    (is (= (count-duplicates [[0 1]] [[1 0]]) 0))
+    (is (= (count-duplicates [[0 0] [0 1] [1 0] [1 1]] [[9 9]]) 0)))
 
   (testing "returns one when there is only one duplicate"
     (is (= (count-duplicates [7] [7]) 1))
@@ -47,4 +48,3 @@
   (testing "returns one when there is only one duplicate in the middle"
     (is (= (count-duplicates [1] [0 1 4]) 1)))
     (is (= (count-duplicates [[3 5]] [[5 3] [3 5] [1 1]]) 1)))
-
