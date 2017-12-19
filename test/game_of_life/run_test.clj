@@ -46,5 +46,28 @@
     (is (= (count-duplicates [[1 0] [4 5] [7 7] [8 3] [12 4] [45 7]] [[1 0] [8 3] [45 7]]) 3)))
 
   (testing "returns one when there is only one duplicate in the middle"
-    (is (= (count-duplicates [1] [0 1 4]) 1)))
-    (is (= (count-duplicates [[3 5]] [[5 3] [3 5] [1 1]]) 1)))
+    (is (= (count-duplicates [1] [0 1 4]) 1))
+    (is (= (count-duplicates [[3 5]] [[5 3] [3 5] [1 1]]) 1))))
+
+(deftest gonna-live?-test
+  (testing "Any live cell with fewer than two live neighbours dies"
+    (is (false? (gonna-live? [5 5] [[5 5] [20 20]])))
+    (is (false? (gonna-live? [5 5] [[5 5] [7 7] [20 20]])))
+    (is (false? (gonna-live? [5 5] [[5 5] [7 7] [5 6] [20 20]]))))
+
+  (testing "Any live cell with two or three live neighbours lives"
+    (is (true? (gonna-live? [5 5] [[5 5] [5 4] [5 6] [20 20]])))
+    (is (true? (gonna-live? [5 5] [[5 5] [4 5] [4 5] [20 20]])))
+    (is (true? (gonna-live? [5 5] [[5 5] [6 6] [4 6] [20 20]])))
+    (is (true? (gonna-live? [5 5] [[5 5] [6 6] [4 6] [6 4] [20 20]])))
+    (is (true? (gonna-live? [5 5] [[5 5] [5 4] [5 6] [4 5] [20 20]])))))
+
+(deftest gonna-live?-test
+  (testing "Any live cell with more than three live neighbours dies"
+    (is (false? (gonna-live? [5 5] [[5 5] [5 6] [5 4] [4 5] [6 5] [20 20]])))
+    (is (false? (gonna-live? [5 5] [[5 5] [6 4] [6 6] [4 4] [4 6] [20 20]])))))
+
+(deftest gonna-live?-test
+  (testing "Any dead cell with exactly three live neighbours becomes a live cell"
+    (is (true? (gonna-live? [5 5] [[5 6] [5 4] [4 5] [20 20]])))
+    (is (true? (gonna-live? [5 5] [[6 4] [6 6] [4 4] [20 20]])))))
